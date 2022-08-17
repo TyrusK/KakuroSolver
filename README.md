@@ -23,4 +23,19 @@
   * Figure out if it could use numerical tricks
   * Could also do breadth first
 
+# Tasks
+
+* Learn Python
+* Github
+* Tests
+* Describe file format
+* Plan Board class
+  * Methods to put numbers in cells, rows/cols
+  * Tests
+  * Methods to draw current board
+  * Loop logic
+  * Stack
+  * Record statistics
+* Cell class
+* row/col class
 
