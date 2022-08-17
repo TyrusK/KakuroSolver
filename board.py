@@ -8,3 +8,4 @@ class Board:
         self.cells = cells
         self.height = height
         self.width = width
+
