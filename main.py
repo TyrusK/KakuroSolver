@@ -1,16 +1,22 @@
-# This is a sample Python script.
-
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Die, {name}!')  # Press ⌘F8 to toggle the breakpoint.
+from direction import Direction
+from board_str import board_str
+from reader import reader
 
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    board = reader("test_file.txt")
+    string = board_str(board)
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+
+
+
+    """
+    for group in board.groups:
+        print(f"({group.anchor.x}, {group.anchor.y})", end=", ")
+        if group.direction == Direction.VERTICAL:
+            print("Col", end=", ")
+        elif group.direction == Direction.HORIZONTAL:
+            print("Row", end=", ")
+        print(f"Total: {group.total}", end=", ")
+        print(f"len: {group.len}")
+    """

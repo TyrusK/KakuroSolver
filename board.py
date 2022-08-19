@@ -1,5 +1,5 @@
-from cell import Cell
 from group import Group
+from group import Cell
 
 
 class Board:

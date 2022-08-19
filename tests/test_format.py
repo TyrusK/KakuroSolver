@@ -1,5 +1,5 @@
 import pytest
-from board import Board
+from reader import reader
 
 
 def test_basic():
@@ -8,6 +8,6 @@ def test_basic():
 
 def test_filename():
     f = "test_file.txt"
-    b = Board(f)
+    b = reader(f)
     assert b
     assert b.filename == f
