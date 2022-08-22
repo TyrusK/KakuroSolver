@@ -3,8 +3,8 @@ from reader import reader
 
 
 if __name__ == '__main__':
-    board = reader("test_file.txt")
-    string = str(board)
+    board = reader("wrong_board.txt")
+    print(f"[\n{board}\n]")
 
     """
     for group in board.groups:

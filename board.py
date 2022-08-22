@@ -23,6 +23,8 @@ class Board:
 
     def __str__(self):
         string = ""
+        if len(self.groups) == 0:
+            return string
         x = 0
         y = 0
         group_num = 0

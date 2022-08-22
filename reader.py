@@ -1,3 +1,4 @@
+import os
 from cellType import CellType
 from board import Board
 from group import Group
@@ -8,8 +9,12 @@ from direction import Direction
 def reader(filename: str):
     cells = []
     groups = []
+    if not (os.path.exists(filename) and os.access(filename, os.R_OK)):
+        print(f"File \"{filename}\" could not be found")
+        exit()
     with open(filename, "r") as file:
         line = file.readline()
+        i = 0
         j = 0
         while line != "":
             line = line.replace(" ", "")
@@ -38,6 +43,7 @@ def reader(filename: str):
             cells.append(cell_row)
             line = file.readline()
             j += 1
+    j -= 1
     for g in groups:
         x = g.anchor.x
         y = g.anchor.y
