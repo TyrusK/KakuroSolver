@@ -1,14 +1,10 @@
 from direction import Direction
-from board_str import board_str
 from reader import reader
 
 
 if __name__ == '__main__':
     board = reader("test_file.txt")
-    string = board_str(board)
-
-
-
+    string = str(board)
 
     """
     for group in board.groups:

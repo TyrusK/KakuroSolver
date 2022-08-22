@@ -7,7 +7,7 @@ def test_basic():
 
 
 def test_filename():
-    f = "test_file.txt"
+    f = "../test_file.txt"
     b = reader(f)
     assert b
     assert b.filename == f
