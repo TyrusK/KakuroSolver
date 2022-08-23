@@ -16,6 +16,7 @@ def reader(filename: str):
         line = file.readline()
         i = 0
         j = 0
+        have_width = False
         while line != "":
             line = line.replace(" ", "")
             split_line = line.split("|")
@@ -27,7 +28,7 @@ def reader(filename: str):
             if split_line[-1] == "\n":
                 split_line.pop(-1)
             else:
-                print("Invalid format, each line must end with \"|\" character")
+                print("Invalid format, each line must end with \"|\" character and the last line must be blank")
                 exit()
             cell_row = []
             for i in range(len(split_line)):
@@ -37,8 +38,12 @@ def reader(filename: str):
                 except ValueError:
                     pass
                 if value is not None:
-                    cell = Cell(i, j, value, None, None, CellType.SPACE)
-                    cell_row.append(cell)
+                    if 0 < value < 10:
+                        cell = Cell(i, j, value, None, None, CellType.SPACE)
+                        cell_row.append(cell)
+                    else:
+                        print("Invalid format, values must be single digits above zero")
+                        exit()
                 elif split_line[i] == ".":
                     cell = Cell(i, j, None, None, None, CellType.SPACE)
                     cell_row.append(cell)
@@ -50,12 +55,26 @@ def reader(filename: str):
                     # print(f"cell: |{split_line[i]}|")
                     if group_pair[0] != "-":
                         # print(f"col: [{group_pair[0]}]")
-                        group = Group([], Direction.VERTICAL, cell, int(group_pair[0]))
+                        try:
+                            group = Group([], Direction.VERTICAL, cell, int(group_pair[0]))
+                        except ValueError:
+                            print("Invalid cell format 1")
+                            exit()
                         groups.append(group)
                     if group_pair[1] != "-":
                         # print(f"row: [{group_pair[1]}]")
-                        group = Group([], Direction.HORIZONTAL, cell, int(group_pair[1]))
+                        try:
+                            group = Group([], Direction.HORIZONTAL, cell, int(group_pair[1]))
+                        except ValueError:
+                            print("Invalid cell format 2")
+                            exit()
                         groups.append(group)
+            if not have_width:
+                width = i
+                have_width = True
+            if have_width and i != width:
+                print("Invalid format, inconsistent width")
+                exit()
             cells.append(cell_row)
             line = file.readline()
             j += 1
