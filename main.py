@@ -14,5 +14,5 @@ if __name__ == '__main__':
         elif group.direction == Direction.HORIZONTAL:
             print("Row", end=", ")
         print(f"Total: {group.total}", end=", ")
-        print(f"len: {group.len}")
+        print(f"size: {group.size}")
     """

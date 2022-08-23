@@ -19,11 +19,27 @@ def reader(filename: str):
         while line != "":
             line = line.replace(" ", "")
             split_line = line.split("|")
-            split_line.remove("")
-            split_line.remove("\n")
+            if split_line[0] == "":
+                split_line.pop(0)
+            else:
+                print("Invalid format, each line must begin with \"|\" character")
+                exit()
+            if split_line[-1] == "\n":
+                split_line.pop(-1)
+            else:
+                print("Invalid format, each line must end with \"|\" character")
+                exit()
             cell_row = []
             for i in range(len(split_line)):
-                if split_line[i] == ".":
+                value = None
+                try:
+                    value = int(split_line[i])
+                except ValueError:
+                    pass
+                if value is not None:
+                    cell = Cell(i, j, value, None, None, CellType.SPACE)
+                    cell_row.append(cell)
+                elif split_line[i] == ".":
                     cell = Cell(i, j, None, None, None, CellType.SPACE)
                     cell_row.append(cell)
                 else:
@@ -47,18 +63,27 @@ def reader(filename: str):
     for g in groups:
         x = g.anchor.x
         y = g.anchor.y
+        has_size = False
         while True:
             if g.direction == Direction.VERTICAL:
                 y += 1
                 if y > j or cells[y][x].cell_type == CellType.WALL:
                     break
+                has_size = True
                 g.add_cell(cells[y][x])
                 cells[y][x].col = g
             elif g.direction == Direction.HORIZONTAL:
                 x += 1
                 if x > i or cells[y][x].cell_type == CellType.WALL:
                     break
+                has_size = True
                 g.add_cell(cells[y][x])
-                cells[y][x].col = g
+                cells[y][x].row = g
+        if not has_size:
+            if g.direction == Direction.VERTICAL:
+                print("A column has zero size, invalid board")
+            elif g.direction == Direction.HORIZONTAL:
+                print("A row has zero size, invalid board")
+            exit()
     board = Board(groups, cells, j + 1, i + 1)
     return board

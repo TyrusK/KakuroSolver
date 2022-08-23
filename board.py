@@ -49,6 +49,8 @@ class Board:
                         group_num += 1
                     else:
                         string += "- "
+                elif cell.value is not None:
+                    string += f"|  {cell.value}  "
                 else:
                     string += "|  .  "
                 x += 1

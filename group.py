@@ -20,8 +20,8 @@ class Group:
         self.direction = direction
         self.anchor = anchor
         self.total = total
-        self.len = 0
+        self.size = 0
 
     def add_cell(self, cell: Cell):
         self.cells.append(cell)
-        self.len += 1
+        self.size += 1
