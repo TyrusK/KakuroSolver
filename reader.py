@@ -39,16 +39,16 @@ def reader(filename: str):
                     pass
                 if value is not None:
                     if 0 < value < 10:
-                        cell = Cell(i, j, value, None, None, CellType.SPACE)
+                        cell = Cell(i, j, None, CellType.SPACE)
                         cell_row.append(cell)
                     else:
                         print("Invalid format, values must be single digits above zero")
                         exit()
                 elif split_line[i] == ".":
-                    cell = Cell(i, j, None, None, None, CellType.SPACE)
+                    cell = Cell(i, j, None, CellType.SPACE)
                     cell_row.append(cell)
                 else:
-                    cell = Cell(i, j, None, None, None, CellType.WALL)
+                    cell = Cell(i, j, None, CellType.WALL)
                     cell_row.append(cell)
                     group_pair = split_line[i].split("\\")
                     # print(f"\ni: {i},  j: {j}")
@@ -58,7 +58,7 @@ def reader(filename: str):
                         try:
                             group = Group([], Direction.VERTICAL, cell, int(group_pair[0]))
                         except ValueError:
-                            print("Invalid cell format 1")
+                            print("Invalid cell format")
                             exit()
                         groups.append(group)
                     if group_pair[1] != "-":
@@ -66,7 +66,7 @@ def reader(filename: str):
                         try:
                             group = Group([], Direction.HORIZONTAL, cell, int(group_pair[1]))
                         except ValueError:
-                            print("Invalid cell format 2")
+                            print("Invalid cell format")
                             exit()
                         groups.append(group)
             if not have_width:
@@ -82,6 +82,7 @@ def reader(filename: str):
     for g in groups:
         x = g.anchor.x
         y = g.anchor.y
+        index = 0
         has_size = False
         while True:
             if g.direction == Direction.VERTICAL:
@@ -91,6 +92,7 @@ def reader(filename: str):
                 has_size = True
                 g.add_cell(cells[y][x])
                 cells[y][x].col = g
+                cells[y][x].col_index = index
             elif g.direction == Direction.HORIZONTAL:
                 x += 1
                 if x > i or cells[y][x].cell_type == CellType.WALL:
@@ -98,11 +100,33 @@ def reader(filename: str):
                 has_size = True
                 g.add_cell(cells[y][x])
                 cells[y][x].row = g
+                cells[y][x].row_index = index
+            index += 1
         if not has_size:
             if g.direction == Direction.VERTICAL:
                 print("A column has zero size, invalid board")
             elif g.direction == Direction.HORIZONTAL:
                 print("A row has zero size, invalid board")
             exit()
+        min_total = g.size * (g.size + 1) * 0.5
+        max_total = g.size * (19 - g.size) * 0.5
+        group_type = "row"
+        if g.direction == Direction.VERTICAL:
+            group_type = "column"
+        if g.total < min_total:
+            print(f"The sum for a {group_type} of length {g.size} cannot be less than {int(min_total)}")
+            exit()
+        if g.total > max_total:
+            print(f"The sum for a {group_type} of length {g.size} cannot be greater than {int(max_total)}")
+            exit()
+    for cell_line in cells:
+        for current_cell in cell_line:
+            if current_cell.cell_type == CellType.SPACE:
+                if current_cell.row is None:
+                    print("A row has no defined value, invalid board")
+                    exit()
+                if current_cell.col is None:
+                    print("A column has no defined value, invalid board")
+                    exit()
     board = Board(groups, cells, j + 1, i + 1)
     return board

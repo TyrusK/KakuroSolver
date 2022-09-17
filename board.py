@@ -1,7 +1,8 @@
+from tkinter import BOTH
+
 from cellType import CellType
 from direction import Direction
 from group import Group
-from group import Cell
 
 
 def num_string(group: Group):
@@ -59,3 +60,67 @@ class Board:
                     x = 0
             y += 1
         return string
+
+    def draw(self, canvas, square_size: int, width: int, height: int):
+
+        canvas.pack(fill=BOTH, expand=1)
+
+        for i in range(self.width + 1):
+            canvas.create_line(4 + square_size * i, 2, 4 + square_size * i, height - 3, width=3)
+
+        for i in range(self.height + 1):
+            canvas.create_line(2, 4 + square_size * i, width - 3, 4 + square_size * i, width=3)
+
+        if len(self.groups) == 0:
+            return
+        x = 0
+        y = 0
+        group_num = 0
+        max_group = len(self.groups)
+        group = self.groups[group_num]
+        for line in self.cells:
+            for cell in line:
+                if group_num < max_group:
+                    group = self.groups[group_num]
+                if cell.cell_type == CellType.WALL:
+                    canvas.create_rectangle(6 + square_size * x, 6 + square_size * y, 3 + square_size * (x + 1),
+                                            3 + square_size * (y + 1), width=0, fill="#7DC586")
+                    canvas.create_line(4 + square_size * x, 4 + square_size * y, 4 + square_size * (x + 1), 
+                                       4 + square_size * (y + 1), width=3)
+                    if group.anchor.x == x and group.anchor.y == y and group.direction == Direction.VERTICAL:
+                        canvas.create_text(4 + square_size * (x + 0.5), 4 + square_size * (y + 0.85),
+                                           text=str(group.total), fill="black", font='Helvetica 20 bold')
+                        group_num += 1
+                        if group_num < max_group:
+                            group = self.groups[group_num]
+                    if group.anchor.x == x and group.anchor.y == y and group.direction == Direction.HORIZONTAL:
+                        shift_percent = 0.81
+                        if group.total < 10:
+                            shift_percent = 0.89
+                        canvas.create_text(4 + square_size * (x + shift_percent), 4 + square_size * (y + 0.5),
+                                           text=str(group.total), fill="black", font='Helvetica 20 bold')
+                        group_num += 1
+                elif cell.value is not None:
+                    canvas.create_text(4 + square_size * (x + 0.5), 4 + square_size * (y + 0.5), text=str(cell.value),
+                                       fill="black", font='Helvetica 50')
+                else:
+                    edge_space = 0.2
+                    for num in range(1, 10):
+                        if num in cell.options:
+                            canvas.create_text(4 + square_size * (x + edge_space + ((num - 1) % 3) * (0.5 - edge_space)),
+                                               4 + square_size * (y + edge_space + round((num - 2) / 3) * (0.5 - edge_space)),
+                                               text=str(num), fill="black", font='Helvetica 20')
+                x += 1
+                if x > self.width - 1:
+                    # string += "|\n"
+                    x = 0
+            y += 1
+        return
+
+    def fill_cell_options(self):
+        for group in self.groups:
+            group.find_sum_options(group.total, group.size, group.size, [])
+        for cell_line in self.cells:
+            for cell in cell_line:
+                if cell.cell_type == CellType.SPACE:
+                    cell.find_options()
