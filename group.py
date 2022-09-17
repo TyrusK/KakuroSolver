@@ -18,17 +18,28 @@ class Cell:
 
     def find_options(self):
         group = self.row
+        index = self.row_index
         while True:
             option_list = set()
             for sum_option in group.sum_options:
-                for num in sum_option:
-                    option_list.add(num)
+                option_list.add(sum_option[index])
             if group == self.row:
                 self.options = option_list
             else:
+                # temp solution
                 self.options = self.options.intersection(option_list)
+
+                """
+                # remove nums with special method that calls group method that calls it etc
+                temp_set = self.options.copy()
+                for num in temp_set:
+                    if not num in option_list:
+                        self.remove_num_option(num)
+                """
+
                 break
             group = self.col
+            index = self.col_index
 
 
 def sum_list(int_list: list):

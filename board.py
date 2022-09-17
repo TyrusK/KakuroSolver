@@ -124,3 +124,8 @@ class Board:
             for cell in cell_line:
                 if cell.cell_type == CellType.SPACE:
                     cell.find_options()
+
+        for cell_line in self.cells:
+            for cell in cell_line:
+                if cell.cell_type == CellType.SPACE:
+                    cell.find_options()
