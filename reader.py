@@ -39,7 +39,7 @@ def reader(filename: str):
                     pass
                 if value is not None:
                     if 0 < value < 10:
-                        cell = Cell(i, j, None, CellType.SPACE)
+                        cell = Cell(i, j, value, CellType.SPACE)
                         cell_row.append(cell)
                     else:
                         print("Invalid format, values must be single digits above zero")
@@ -51,10 +51,10 @@ def reader(filename: str):
                     cell = Cell(i, j, None, CellType.WALL)
                     cell_row.append(cell)
                     group_pair = split_line[i].split("\\")
-                    # print(f"\ni: {i},  j: {j}")
-                    # print(f"cell: |{split_line[i]}|")
+                    if len(group_pair) != 2:
+                        print("Invalid cell format")
+                        exit()
                     if group_pair[0] != "-":
-                        # print(f"col: [{group_pair[0]}]")
                         try:
                             group = Group([], Direction.VERTICAL, cell, int(group_pair[0]))
                         except ValueError:
@@ -62,7 +62,6 @@ def reader(filename: str):
                             exit()
                         groups.append(group)
                     if group_pair[1] != "-":
-                        # print(f"row: [{group_pair[1]}]")
                         try:
                             group = Group([], Direction.HORIZONTAL, cell, int(group_pair[1]))
                         except ValueError:

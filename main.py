@@ -5,7 +5,7 @@ from tkinter import *
 if __name__ == '__main__':
     board = reader("test_file.txt")
     board.fill_cell_options()
-    print(f"[\n{board}\n]")
+    print(board)
     square_size = 80
 
     root = Tk()

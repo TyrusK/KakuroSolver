@@ -16,6 +16,23 @@ class Cell:
         self.cell_type = cell_type
         self.options = set()
 
+    def remove_num_option(self, num: int):
+        self.options.remove(num)
+        group = self.row
+        index = self.row_index
+        while True:
+            temp_sum_options = group.sum_options.copy()
+            i = 0
+            for sum_option in temp_sum_options:
+                if sum_option[index] != num:
+                    group.remove_sum_option(i)
+                else:
+                    i += 1
+            if group == self.col:
+                break
+            group = self.col
+            index = self.col_index
+
     def find_options(self):
         group = self.row
         index = self.row_index
@@ -27,15 +44,13 @@ class Cell:
                 self.options = option_list
             else:
                 # temp solution
-                self.options = self.options.intersection(option_list)
+                # self.options = self.options.intersection(option_list)
 
-                """
                 # remove nums with special method that calls group method that calls it etc
                 temp_set = self.options.copy()
                 for num in temp_set:
-                    if not num in option_list:
+                    if num not in option_list:
                         self.remove_num_option(num)
-                """
 
                 break
             group = self.col
@@ -68,6 +83,9 @@ class Group:
         for num in range(int(min_value), int(max_value + 1)):
             if num in sum_option:
                 continue
+            cell = self.cells[len(sum_option)]
+            if cell.value is not None and cell.value != num:
+                continue
             sum_option.append(num)
             if len(sum_option) == true_size:
                 new_sum_option = sum_option.copy()
@@ -77,3 +95,9 @@ class Group:
             else:
                 self.find_sum_options(total - num, size - 1, true_size, sum_option)
             del sum_option[-1]
+
+    def remove_sum_option(self, index: int):
+
+        
+
+        del self.sum_options[index]
