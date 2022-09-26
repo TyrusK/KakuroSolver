@@ -14,7 +14,7 @@ class Cell:
         self.row_index = None
         self.col_index = None
         self.cell_type = cell_type
-        self.options = set()
+        self.options = set(range(1, 10))
 
     def remove_num_option(self, num: int):
         self.options.remove(num)
@@ -22,40 +22,35 @@ class Cell:
         index = self.row_index
         while True:
             temp_sum_options = group.sum_options.copy()
-            i = 0
             for sum_option in temp_sum_options:
-                if sum_option[index] != num:
-                    group.remove_sum_option(i)
-                else:
-                    i += 1
+                if sum_option[index] == num and sum_option in group.sum_options:
+                    group.remove_sum_option(sum_option)
             if group == self.col:
                 break
             group = self.col
             index = self.col_index
 
     def find_options(self):
+        row_options = set()
         group = self.row
         index = self.row_index
         while True:
-            option_list = set()
+            col_options = set()
             for sum_option in group.sum_options:
-                option_list.add(sum_option[index])
+                col_options.add(sum_option[index])
             if group == self.row:
-                self.options = option_list
+                row_options = col_options
             else:
-                # temp solution
-                # self.options = self.options.intersection(option_list)
-
                 # remove nums with special method that calls group method that calls it etc
+                # This should call for nums that are in only the row or only the col
                 temp_set = self.options.copy()
                 for num in temp_set:
-                    if num not in option_list:
+                    if num not in row_options or num not in col_options:
                         self.remove_num_option(num)
 
                 break
             group = self.col
             index = self.col_index
-
 
 def sum_list(int_list: list):
     total = 0
@@ -96,8 +91,19 @@ class Group:
                 self.find_sum_options(total - num, size - 1, true_size, sum_option)
             del sum_option[-1]
 
-    def remove_sum_option(self, index: int):
+    # inefficient, maybe find new cell possibilities for all cells first then compare, reference stuff a lot less
+    def remove_sum_option(self, removed_option: list):
+        self.sum_options.remove(removed_option)
+        i = 0
+        for cell in self.cells:
+            num = removed_option[i]
 
-        
+            found_num = False
+            for sum_option in self.sum_options:
+                if sum_option[i] == num:
+                    found_num = True
 
-        del self.sum_options[index]
+            if num in cell.options and not found_num:
+                cell.remove_num_option(num)
+
+            i += 1

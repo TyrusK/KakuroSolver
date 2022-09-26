@@ -88,8 +88,9 @@ class Board:
                     canvas.create_line(4 + square_size * x, 4 + square_size * y, 4 + square_size * (x + 1), 
                                        4 + square_size * (y + 1), width=3)
                     if group.anchor.x == x and group.anchor.y == y and group.direction == Direction.VERTICAL:
+                        font_size = int(square_size / 4)
                         canvas.create_text(4 + square_size * (x + 0.5), 4 + square_size * (y + 0.85),
-                                           text=str(group.total), fill="black", font='Helvetica 20 bold')
+                                           text=str(group.total), fill="black", font=f'Helvetica {font_size} bold')
                         group_num += 1
                         if group_num < max_group:
                             group = self.groups[group_num]
@@ -97,12 +98,14 @@ class Board:
                         shift_percent = 0.81
                         if group.total < 10:
                             shift_percent = 0.89
+                        font_size = int(square_size / 4)
                         canvas.create_text(4 + square_size * (x + shift_percent), 4 + square_size * (y + 0.5),
-                                           text=str(group.total), fill="black", font='Helvetica 20 bold')
+                                           text=str(group.total), fill="black", font=f'Helvetica {font_size} bold')
                         group_num += 1
                 elif cell.value is not None:
+                    font_size = int(square_size * 5 / 8)
                     canvas.create_text(4 + square_size * (x + 0.5), 4 + square_size * (y + 0.5), text=str(cell.value),
-                                       fill="black", font='Helvetica 50')
+                                       fill="black", font=f'Helvetica {font_size}')
                 else:
                     edge_space = 0.2
                     for num in range(1, 10):
@@ -123,4 +126,12 @@ class Board:
         for cell_line in self.cells:
             for cell in cell_line:
                 if cell.cell_type == CellType.SPACE:
+                    print(f"Starting cell ({cell.x}, {cell.y})")
                     cell.find_options()
+                    print(f"Finished cell ({cell.x}, {cell.y})")
+
+    def find_values(self):
+        for cell_line in self.cells:
+            for cell in cell_line:
+                if cell.cell_type == CellType.SPACE and len(cell.options) == 1:
+                    cell.value = cell.options.pop()
