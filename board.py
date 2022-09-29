@@ -103,11 +103,6 @@ class Board:
                         self.canvas.create_text(4 + square_size * (x + shift_percent), 4 + square_size * (y + 0.5),
                                                 text=str(group.total), fill="black", font=f'Helvetica {font_size} bold')
                         group_num += 1
-                elif cell.value is not None:
-                    font_size = int(square_size * 5 / 8)
-                    self.canvas.create_text(4 + square_size * (x + 0.5), 4 + square_size * (y + 0.5),
-                                            text=str(cell.value),
-                                            fill="black", font=f'Helvetica {font_size}')
                 else:
                     cell.draw()
                 x += 1

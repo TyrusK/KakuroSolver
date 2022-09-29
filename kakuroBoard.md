@@ -20,6 +20,8 @@ Open cells are represented by two spaces on either side
 of a period. If it contains a value, the digit replaces
 the period.
 
+Might be faster  if the first pass was just intersection
+
 The initial board:
 ```
 | -\- | 5\- |20\- | -\- |15\- |12\- | 7\- |

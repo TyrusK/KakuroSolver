@@ -37,6 +37,7 @@ if __name__ == '__main__':
     root.update()
     board.fill_cell_options()
     board.find_values()
+    board.draw()
     print(board)
 
     # Animation stuff
