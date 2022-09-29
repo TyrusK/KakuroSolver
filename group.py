@@ -1,10 +1,12 @@
+import time
+
 from direction import Direction
 from cellType import CellType
 from typing import Optional
 
-
 class Cell:
-    def __init__(self, x: int, y: int, value: Optional[int], cell_type: CellType):
+    def __init__(self,x: int, y: int, value: Optional[int], cell_type: CellType):
+        self.board = None
         self.x = x
         self.y = y
         self.value = value
@@ -18,6 +20,9 @@ class Cell:
 
     def remove_num_option(self, num: int):
         self.options.remove(num)
+        self.draw()
+        self.board.root.update()
+        time.sleep(1)
         group = self.row
         index = self.row_index
         while True:
@@ -51,6 +56,22 @@ class Cell:
                 break
             group = self.col
             index = self.col_index
+
+    def draw(self):
+        edge_space = 0.2
+        square_size = self.board.square_size
+        font_size = int(square_size / 4)
+        self.board.canvas.create_rectangle(4 + square_size * (self.x + 1.5 * edge_space - 0.25),
+                                           4 + square_size * (self.y + 1.5 * edge_space - 0.25),
+                                           4 + square_size * (self.x - 1.5 * edge_space + 1.25),
+                                           4 + square_size * (self.y - 1.5 * edge_space + 1.25),
+                                           width=0, fill="white")
+        for num in range(1,10):
+            cell_x = 4 + square_size * (self.x + edge_space + ((num - 1) % 3) * (0.5 - edge_space))
+            cell_y = 4 + square_size * (self.y + edge_space + round((num - 2) / 3) * (0.5 - edge_space))
+            if num in self.options:
+                self.board.canvas.create_text(cell_x, cell_y, text=str(num), fill="black",font=f'Helvetica {font_size}')
+
 
 def sum_list(int_list: list):
     total = 0

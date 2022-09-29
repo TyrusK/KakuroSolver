@@ -118,6 +118,7 @@ def reader(filename: str):
         if g.total > max_total:
             print(f"The sum for a {group_type} of length {g.size} cannot be greater than {int(max_total)}")
             exit()
+    board = Board(groups, cells, j + 1, i + 1)
     for cell_line in cells:
         for current_cell in cell_line:
             if current_cell.cell_type == CellType.SPACE:
@@ -127,5 +128,5 @@ def reader(filename: str):
                 if current_cell.col is None:
                     print("A column has no defined value, invalid board")
                     exit()
-    board = Board(groups, cells, j + 1, i + 1)
+                current_cell.board = board
     return board

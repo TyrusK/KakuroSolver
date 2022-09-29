@@ -21,6 +21,9 @@ class Board:
         self.cells = cells
         self.height = height
         self.width = width
+        self.canvas = None
+        self.square_size = None
+        self.root = None
 
     def __str__(self):
         string = ""
@@ -61,15 +64,13 @@ class Board:
             y += 1
         return string
 
-    def draw(self, canvas, square_size: int, width: int, height: int):
+    def draw(self):
 
-        canvas.pack(fill=BOTH, expand=1)
+        self.canvas.pack(fill=BOTH, expand=1)
 
-        for i in range(self.width + 1):
-            canvas.create_line(4 + square_size * i, 2, 4 + square_size * i, height - 3, width=3)
-
-        for i in range(self.height + 1):
-            canvas.create_line(2, 4 + square_size * i, width - 3, 4 + square_size * i, width=3)
+        square_size = self.square_size
+        width = square_size * self.width + 9
+        height = square_size * self.height + 9
 
         if len(self.groups) == 0:
             return
@@ -83,14 +84,14 @@ class Board:
                 if group_num < max_group:
                     group = self.groups[group_num]
                 if cell.cell_type == CellType.WALL:
-                    canvas.create_rectangle(6 + square_size * x, 6 + square_size * y, 3 + square_size * (x + 1),
-                                            3 + square_size * (y + 1), width=0, fill="#7DC586")
-                    canvas.create_line(4 + square_size * x, 4 + square_size * y, 4 + square_size * (x + 1), 
-                                       4 + square_size * (y + 1), width=3)
+                    self.canvas.create_rectangle(4 + square_size * x, 4 + square_size * y, 4 + square_size * (x + 1),
+                                                 4 + square_size * (y + 1), width=0, fill="#7DC586")
+                    self.canvas.create_line(4 + square_size * x, 4 + square_size * y, 4 + square_size * (x + 1),
+                                            4 + square_size * (y + 1), width=square_size * 3 / 80)
                     if group.anchor.x == x and group.anchor.y == y and group.direction == Direction.VERTICAL:
                         font_size = int(square_size / 4)
-                        canvas.create_text(4 + square_size * (x + 0.5), 4 + square_size * (y + 0.85),
-                                           text=str(group.total), fill="black", font=f'Helvetica {font_size} bold')
+                        self.canvas.create_text(4 + square_size * (x + 0.5), 4 + square_size * (y + 0.85),
+                                                text=str(group.total), fill="black", font=f'Helvetica {font_size} bold')
                         group_num += 1
                         if group_num < max_group:
                             group = self.groups[group_num]
@@ -99,25 +100,31 @@ class Board:
                         if group.total < 10:
                             shift_percent = 0.89
                         font_size = int(square_size / 4)
-                        canvas.create_text(4 + square_size * (x + shift_percent), 4 + square_size * (y + 0.5),
-                                           text=str(group.total), fill="black", font=f'Helvetica {font_size} bold')
+                        self.canvas.create_text(4 + square_size * (x + shift_percent), 4 + square_size * (y + 0.5),
+                                                text=str(group.total), fill="black", font=f'Helvetica {font_size} bold')
                         group_num += 1
                 elif cell.value is not None:
                     font_size = int(square_size * 5 / 8)
-                    canvas.create_text(4 + square_size * (x + 0.5), 4 + square_size * (y + 0.5), text=str(cell.value),
-                                       fill="black", font=f'Helvetica {font_size}')
+                    self.canvas.create_text(4 + square_size * (x + 0.5), 4 + square_size * (y + 0.5),
+                                            text=str(cell.value),
+                                            fill="black", font=f'Helvetica {font_size}')
                 else:
-                    edge_space = 0.2
-                    for num in range(1, 10):
-                        if num in cell.options:
-                            canvas.create_text(4 + square_size * (x + edge_space + ((num - 1) % 3) * (0.5 - edge_space)),
-                                               4 + square_size * (y + edge_space + round((num - 2) / 3) * (0.5 - edge_space)),
-                                               text=str(num), fill="black", font='Helvetica 20')
+                    cell.draw()
                 x += 1
                 if x > self.width - 1:
-                    # string += "|\n"
                     x = 0
             y += 1
+
+        line_width = round(square_size * 3 / 80)
+        print(f"line width: {line_width}")
+        for i in range(self.width + 1):
+            self.canvas.create_line(4 + square_size * i, 4, 4 + square_size * i, height - 5, width=line_width)
+
+        for i in range(self.height + 1):
+            self.canvas.create_line(4, 4 + square_size * i, width - 5, 4 + square_size * i, width=line_width)
+
+        self.canvas.create_rectangle(4, 4, 4 + self.width * square_size, 4 + self.width * square_size, width=line_width)
+
         return
 
     def fill_cell_options(self):
