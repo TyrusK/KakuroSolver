@@ -1,8 +1,10 @@
+import cProfile
 import time
 from reader import reader
 from tkinter import *
 
-if __name__ == '__main__':
+
+def main():
     board = reader("test_file.txt")
     square_size = 80
 
@@ -23,7 +25,7 @@ if __name__ == '__main__':
 
     x_offset = int((screen_width - width) / 2)
     y_offset = int((screen_height - height) / 2)
-    print(f"width: {width}, height: {height}, x_offset: {x_offset}, y_offset: {y_offset}")
+    # print(f"width: {width}, height: {height}, x_offset: {x_offset}, y_offset: {y_offset}")
     root.geometry(f"{width}x{height}+{x_offset}+{y_offset}")
 
     frame = Frame(root)
@@ -36,12 +38,16 @@ if __name__ == '__main__':
     board.draw()
     root.update()
     board.fill_cell_options()
-    board.find_values()
     board.draw()
-    print(board)
+    # print(board)
 
     # Animation stuff
     """root.update()
     time.sleep(1)"""
 
-    root.mainloop()
+    # root.mainloop()
+
+
+if __name__ == '__main__':
+    # main()
+    cProfile.run("main()")

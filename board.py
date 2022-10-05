@@ -111,7 +111,7 @@ class Board:
             y += 1
 
         line_width = round(square_size * 3 / 80)
-        print(f"line width: {line_width}")
+        # print(f"line width: {line_width}")
         for i in range(self.width + 1):
             self.canvas.create_line(4 + square_size * i, 4, 4 + square_size * i, height - 5, width=line_width)
 
@@ -128,12 +128,6 @@ class Board:
         for cell_line in self.cells:
             for cell in cell_line:
                 if cell.cell_type == CellType.SPACE:
-                    print(f"Starting cell ({cell.x}, {cell.y})")
+                    # print(f"Starting cell ({cell.x}, {cell.y})")
                     cell.find_options()
-                    print(f"Finished cell ({cell.x}, {cell.y})")
-
-    def find_values(self):
-        for cell_line in self.cells:
-            for cell in cell_line:
-                if cell.cell_type == CellType.SPACE and len(cell.options) == 1:
-                    cell.value = cell.options.pop()
+                    # print(f"Finished cell ({cell.x}, {cell.y})")

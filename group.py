@@ -1,11 +1,11 @@
 import time
-
 from direction import Direction
 from cellType import CellType
 from typing import Optional
 
+
 class Cell:
-    def __init__(self,x: int, y: int, value: Optional[int], cell_type: CellType):
+    def __init__(self, x: int, y: int, value: Optional[int], cell_type: CellType):
         self.board = None
         self.x = x
         self.y = y
@@ -22,15 +22,16 @@ class Cell:
         self.options.remove(num)
         self.draw()
         self.board.root.update()
-        # time.sleep(1)
+        time.sleep(0.1)
         group = self.row
         index = self.row_index
         while True:
             temp_sum_options = group.sum_options.copy()
             for sum_option in temp_sum_options:
+                # Slow?
                 if sum_option[index] == num and sum_option in group.sum_options:
                     group.remove_sum_option(sum_option)
-            if group == self.col:
+            if group.direction == Direction.VERTICAL:
                 break
             group = self.col
             index = self.col_index
@@ -43,13 +44,17 @@ class Cell:
             col_options = set()
             for sum_option in group.sum_options:
                 col_options.add(sum_option[index])
-            if group == self.row:
+            if group.direction == Direction.HORIZONTAL:
                 row_options = col_options
             else:
                 # remove nums with special method that calls group method that calls it etc
                 # This should call for nums that are in only the row or only the col
                 temp_set = self.options.copy()
                 for num in temp_set:
+                    # PROBLEM: I don't know why this test works if it does
+                    if num not in self.options:
+                        print("This board cannot be solved")
+                        exit()
                     if num not in row_options or num not in col_options:
                         self.remove_num_option(num)
 
@@ -67,7 +72,8 @@ class Cell:
                                            width=0, fill="white")
         if self.value is None and len(self.options) == 1:
             self.value = self.options.pop()
-        if self.value is None:
+            self.options.add(self.value)
+        if self.value is None or len(self.options) == 0:
             font_size = int(square_size / 4)
             for num in range(1, 10):
                 cell_x = 4 + square_size * (self.x + edge_space + ((num - 1) % 3) * (0.5 - edge_space))
