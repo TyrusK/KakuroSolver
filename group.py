@@ -18,20 +18,51 @@ class Cell:
         self.cell_type = cell_type
         self.options = set(range(1, 10))
 
-    def remove_num_option(self, num: int):
+    # The direction argument is the direction of the group calling this, so only check the other group
+    def remove_num_option(self, num: int, direction: Optional[Direction]):
         self.options.remove(num)
         self.draw()
         self.board.root.update()
         time.sleep(0.1)
+        if len(self.options) == 0:
+            print("Empty cell")
+            exit()
         group = self.row
         index = self.row_index
+        if direction == Direction.HORIZONTAL:
+            group = self.col
+            index = self.col_index
         while True:
             temp_sum_options = group.sum_options.copy()
             for sum_option in temp_sum_options:
-                # Slow?
+                # PROBLEM: Slow?
                 if sum_option[index] == num and sum_option in group.sum_options:
                     group.remove_sum_option(sum_option)
-            if group.direction == Direction.VERTICAL:
+            if group.direction == Direction.VERTICAL or direction == Direction.VERTICAL:
+                break
+            group = self.col
+            index = self.col_index
+
+    def remove_num_option2(self, num: int, direction: Optional[Direction]):
+        self.options.remove(num)
+        self.draw()
+        self.board.root.update()
+        # time.sleep(0.1)
+        if len(self.options) == 0:
+            print("Empty cell")
+            exit()
+        group = self.row
+        index = self.row_index
+        if direction == Direction.HORIZONTAL:
+            group = self.col
+            index = self.col_index
+        while True:
+            temp_sum_options = group.sum_options.copy()
+            for sum_option in temp_sum_options:
+                # PROBLEM: Slow?
+                if sum_option[index] == num and sum_option in group.sum_options:
+                    group.sum_options.remove(sum_option)
+            if group.direction == Direction.VERTICAL or direction == Direction.VERTICAL:
                 break
             group = self.col
             index = self.col_index
@@ -49,18 +80,53 @@ class Cell:
             else:
                 # remove nums with special method that calls group method that calls it etc
                 # This should call for nums that are in only the row or only the col
+                i = 0
                 temp_set = self.options.copy()
                 for num in temp_set:
-                    # PROBLEM: I don't know why this test works if it does
-                    if num not in self.options:
+                    # This works because if removing one num removes another from the same cell, the second num required
+                    # the first to work which is a contradiction
+                    """if len(self.options) != len(temp_set) - i:
                         print("This board cannot be solved")
-                        exit()
+                        exit()"""
                     if num not in row_options or num not in col_options:
-                        self.remove_num_option(num)
+                        self.remove_num_option(num, None)
+                        i += 1
 
                 break
             group = self.col
             index = self.col_index
+
+    def find_options2(self):
+        row_options = set()
+        made_changes = False
+        group = self.row
+        index = self.row_index
+        while True:
+            col_options = set()
+            for sum_option in group.sum_options:
+                col_options.add(sum_option[index])
+            if group.direction == Direction.HORIZONTAL:
+                row_options = col_options
+            else:
+                # remove nums with special method that calls group method that calls it etc
+                # This should call for nums that are in only the row or only the col
+                i = 0
+                temp_set = self.options.copy()
+                for num in temp_set:
+                    # This works because if removing one num removes another from the same cell, the second num required
+                    # the first to work which is a contradiction
+                    """if len(self.options) != len(temp_set) - i:
+                        print("This board cannot be solved")
+                        exit()"""
+                    if num not in row_options or num not in col_options:
+                        made_changes = True
+                        self.remove_num_option2(num, None)
+                        i += 1
+
+                break
+            group = self.col
+            index = self.col_index
+        return made_changes
 
     def draw(self):
         square_size = self.board.square_size
@@ -85,6 +151,11 @@ class Cell:
             font_size = int(square_size * 5 / 8)
             self.board.canvas.create_text(4 + square_size * (self.x + 0.5), 4 + square_size * (self.y + 0.5),
                                           text=str(self.value), fill="black", font=f'Helvetica {font_size}')
+
+    def try_paths(self):
+        for option in self.options:
+            pass
+        return False
 
 
 def sum_list(int_list: list):
@@ -126,19 +197,19 @@ class Group:
                 self.find_sum_options(total - num, size - 1, true_size, sum_option)
             del sum_option[-1]
 
-    # inefficient, maybe find new cell possibilities for all cells first then compare, reference stuff a lot less
     def remove_sum_option(self, removed_option: list):
-        self.sum_options.remove(removed_option)
+        sum_options = self.sum_options
+        sum_options.remove(removed_option)
         i = 0
         for cell in self.cells:
             num = removed_option[i]
 
             found_num = False
-            for sum_option in self.sum_options:
+            for sum_option in sum_options:
                 if sum_option[i] == num:
                     found_num = True
 
             if num in cell.options and not found_num:
-                cell.remove_num_option(num)
+                cell.remove_num_option(num, self.direction)
 
             i += 1

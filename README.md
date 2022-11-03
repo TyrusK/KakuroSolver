@@ -13,7 +13,7 @@
   * Ability to take partially solved boards?
 * Store the possible combinations for each col/row
   * Each white tile stores its options, its col/row
-* Repeatedly find tile with lowest number of options, guess (depth first)
+* 1: Repeatedly find tile with lowest number of options, guess (depth first)
   * Update possible values in other tiles, using possible combos
   * Stack saving each guess and changes
   * Return to guess if contradiction
@@ -22,6 +22,13 @@
   * If tie, choose first or random?
   * Figure out if it could use numerical tricks
   * Could also do breadth first
+* 2: Find cell with the lowest number of options
+  * Follow both/all paths
+  * If solution is found, done
+  * if not, compare things done
+    * Implement commonalities using recursive stuff
+  * Go through cells with 2 options, then 3, etc
+  * Reset if anything is found
 
 # Tasks
 

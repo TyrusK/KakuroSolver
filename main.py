@@ -37,7 +37,8 @@ def main():
 
     board.draw()
     root.update()
-    board.fill_cell_options()
+    board.fill_cell_options2()
+    board.finish_board()
     board.draw()
     # print(board)
 
@@ -45,7 +46,8 @@ def main():
     """root.update()
     time.sleep(1)"""
 
-    # root.mainloop()
+    print("done")
+    root.mainloop()
 
 
 if __name__ == '__main__':

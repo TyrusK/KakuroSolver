@@ -122,6 +122,7 @@ class Board:
 
         return
 
+    # Next step is try dif algorithm where group removes don't call cell removes, go over board many times
     def fill_cell_options(self):
         for group in self.groups:
             group.find_sum_options(group.total, group.size, group.size, [])
@@ -130,4 +131,35 @@ class Board:
                 if cell.cell_type == CellType.SPACE:
                     # print(f"Starting cell ({cell.x}, {cell.y})")
                     cell.find_options()
-                    # print(f"Finished cell ({cell.x}, {cell.y})")
+
+    def fill_cell_options2(self):
+        for group in self.groups:
+            group.find_sum_options(group.total, group.size, group.size, [])
+        done = False
+        while not done:
+            done = True
+            for cell_line in self.cells:
+                for cell in cell_line:
+                    if cell.cell_type == CellType.SPACE:
+                        # print(f"Starting cell ({cell.x}, {cell.y})")
+                        if cell.find_options2():
+                            done = False
+
+    def finish_board(self):
+        target_num_options = 2
+        while True:
+            made_changes = False
+            for line in self.cells:
+                for cell in line:
+                    if len(cell.options) == target_num_options:
+                        made_changes = cell.try_paths()
+                        if made_changes:
+                            break
+                if made_changes:
+                    break
+            if made_changes:
+                target_num_options = 2
+                continue
+            if target_num_options == 9:
+                break
+            target_num_options += 1
