@@ -1,7 +1,14 @@
+import copy
 import time
+
+import display
 from direction import Direction
 from cellType import CellType
 from typing import Optional
+
+
+# Can I remove value?
+from display import Display
 
 
 class Cell:
@@ -43,10 +50,10 @@ class Cell:
             group = self.col
             index = self.col_index
 
-    def remove_num_option2(self, num: int, direction: Optional[Direction]):
+    def remove_num_option2(self, num: int, direction: Optional[Direction], display: Display):
         self.options.remove(num)
-        self.draw()
-        self.board.root.update()
+        display.draw_cell(self)
+        display.root.update()
         # time.sleep(0.1)
         if len(self.options) == 0:
             print("Empty cell")
@@ -96,7 +103,7 @@ class Cell:
             group = self.col
             index = self.col_index
 
-    def find_options2(self):
+    def find_options2(self, display: Display):
         row_options = set()
         made_changes = False
         group = self.row
@@ -120,7 +127,7 @@ class Cell:
                         exit()"""
                     if num not in row_options or num not in col_options:
                         made_changes = True
-                        self.remove_num_option2(num, None)
+                        self.remove_num_option2(num, None, display)
                         i += 1
 
                 break
@@ -128,7 +135,7 @@ class Cell:
             index = self.col_index
         return made_changes
 
-    def draw(self):
+    """def draw(self):
         square_size = self.board.square_size
         edge_space = 0.2
         self.board.canvas.create_rectangle(4 + square_size * (self.x + 1.5 * edge_space - 0.25),
@@ -150,12 +157,31 @@ class Cell:
         else:
             font_size = int(square_size * 5 / 8)
             self.board.canvas.create_text(4 + square_size * (self.x + 0.5), 4 + square_size * (self.y + 0.5),
-                                          text=str(self.value), fill="black", font=f'Helvetica {font_size}')
+                                          text=str(self.value), fill="black", font=f'Helvetica {font_size}')"""
 
-    def try_paths(self):
+    # return True if it made changes, False if it did not
+    # Should make a new board and experiment with it for each option
+    # look at removing each value, if only one gives an error the answer has been found, remove all others (if that
+    # gives errors, the board is invalid)
+    # if no errors from removing any option, no changes are made
+    # if multiple errors, the board is invalid
+    def try_removing_options(self):
+        num_errors = 0
+        print(f"({self.x},{self.y})", end="")
         for option in self.options:
-            pass
-        return False
+            new_board = copy.deepcopy(self.board)
+            print(f", {option}", end="")
+            new_cell = new_board.cells[self.x]
+
+        print("")
+
+        if num_errors == 0:
+            return False
+        if num_errors == 1:
+
+            return True
+        print("This board is invalid.")
+        exit()
 
 
 def sum_list(int_list: list):

@@ -1,5 +1,7 @@
 import cProfile
 import time
+
+from display import Display
 from reader import reader
 from tkinter import *
 
@@ -32,14 +34,13 @@ def main():
     frame.pack(fill=BOTH, expand=1)
 
     canvas = Canvas(frame)
-    board.canvas = canvas
-    board.root = root
+    display = Display(canvas, root)
 
-    board.draw()
+    display.draw_board(board)
     root.update()
-    board.fill_cell_options2()
+    board.fill_cell_options2(display)
     board.finish_board()
-    board.draw()
+    display.draw_board(board)
     # print(board)
 
     # Animation stuff
@@ -51,5 +52,5 @@ def main():
 
 
 if __name__ == '__main__':
-    # main()
-    cProfile.run("main()")
+    main()
+    # cProfile.run("main()")

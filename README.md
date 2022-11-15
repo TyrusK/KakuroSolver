@@ -29,6 +29,9 @@
     * Implement commonalities using recursive stuff
   * Go through cells with 2 options, then 3, etc
   * Reset if anything is found
+* 3: Find cell with the lowest number of options
+  * Follow all paths
+  * If failure is found, remove that option recursively
 
 # Tasks
 
