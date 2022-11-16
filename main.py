@@ -38,7 +38,7 @@ def main():
 
     display.draw_board(board)
     root.update()
-    board.fill_cell_options2(display)
+    board.fill_cell_options(display)
     board.finish_board()
     display.draw_board(board)
     # print(board)

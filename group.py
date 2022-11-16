@@ -26,7 +26,7 @@ class Cell:
         self.options = set(range(1, 10))
 
     # The direction argument is the direction of the group calling this, so only check the other group
-    def remove_num_option(self, num: int, direction: Optional[Direction]):
+    '''def remove_num_option3(self, num: int, direction: Optional[Direction]):
         self.options.remove(num)
         self.draw()
         self.board.root.update()
@@ -48,9 +48,9 @@ class Cell:
             if group.direction == Direction.VERTICAL or direction == Direction.VERTICAL:
                 break
             group = self.col
-            index = self.col_index
+            index = self.col_index'''
 
-    def remove_num_option2(self, num: int, direction: Optional[Direction], display: Display):
+    def remove_num_option(self, num: int, direction: Optional[Direction], display: Display):
         self.options.remove(num)
         display.draw_cell(self)
         display.root.update()
@@ -74,7 +74,7 @@ class Cell:
             group = self.col
             index = self.col_index
 
-    def find_options(self):
+    '''def find_options3(self):
         row_options = set()
         group = self.row
         index = self.row_index
@@ -96,14 +96,14 @@ class Cell:
                         print("This board cannot be solved")
                         exit()"""
                     if num not in row_options or num not in col_options:
-                        self.remove_num_option(num, None)
+                        self.remove_num_option3(num, None)
                         i += 1
 
                 break
             group = self.col
-            index = self.col_index
+            index = self.col_index'''
 
-    def find_options2(self, display: Display):
+    def find_options(self, display: Display):
         row_options = set()
         made_changes = False
         group = self.row
@@ -127,7 +127,7 @@ class Cell:
                         exit()"""
                     if num not in row_options or num not in col_options:
                         made_changes = True
-                        self.remove_num_option2(num, None, display)
+                        self.remove_num_option(num, None, display)
                         i += 1
 
                 break
