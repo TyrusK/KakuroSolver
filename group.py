@@ -26,14 +26,15 @@ class Cell:
         self.options = set(range(1, 10))
 
     # The direction argument is the direction of the group calling this, so only check the other group
-    '''def remove_num_option3(self, num: int, direction: Optional[Direction]):
+    # Returns false if an error was found, true if no problems
+    def remove_num_option_recursive(self, num: int, direction: Optional[Direction], display: Display):
         self.options.remove(num)
-        self.draw()
-        self.board.root.update()
+        display.draw_cell(self)
+        display.root.update()
         time.sleep(0.1)
         if len(self.options) == 0:
-            print("Empty cell")
-            exit()
+            print(f"({self.x}, {self.y}): no cell options")
+            return False
         group = self.row
         index = self.row_index
         if direction == Direction.HORIZONTAL:
@@ -44,11 +45,13 @@ class Cell:
             for sum_option in temp_sum_options:
                 # PROBLEM: Slow?
                 if sum_option[index] == num and sum_option in group.sum_options:
-                    group.remove_sum_option(sum_option)
+                    if not group.remove_sum_option_recursive(sum_option, display):
+                        return False
             if group.direction == Direction.VERTICAL or direction == Direction.VERTICAL:
                 break
             group = self.col
-            index = self.col_index'''
+            index = self.col_index
+        return True
 
     def remove_num_option(self, num: int, direction: Optional[Direction], display: Display):
         self.options.remove(num)
@@ -74,7 +77,7 @@ class Cell:
             group = self.col
             index = self.col_index
 
-    '''def find_options3(self):
+    def find_options_recursive(self):
         row_options = set()
         group = self.row
         index = self.row_index
@@ -96,12 +99,12 @@ class Cell:
                         print("This board cannot be solved")
                         exit()"""
                     if num not in row_options or num not in col_options:
-                        self.remove_num_option3(num, None)
+                        self.remove_num_option_recursive(num, None)
                         i += 1
 
                 break
             group = self.col
-            index = self.col_index'''
+            index = self.col_index
 
     def find_options(self, display: Display):
         row_options = set()
@@ -165,20 +168,29 @@ class Cell:
     # gives errors, the board is invalid)
     # if no errors from removing any option, no changes are made
     # if multiple errors, the board is invalid
-    def try_removing_options(self):
+    def try_removing_options(self, display: Display):
+        true_value = -1
         num_errors = 0
-        print(f"({self.x},{self.y})", end="")
         for option in self.options:
+            # PROBLEM: this does not seem to be making a new board for each iteration
             new_board = copy.deepcopy(self.board)
-            print(f", {option}", end="")
-            new_cell = new_board.cells[self.x]
-
-        print("")
+            print(f"({self.x},{self.y}): {option}")
+            new_cell = new_board.cells[self.y][self.x]
+            if not new_cell.remove_num_option_recursive(option, None, display):
+                print("error")
+                num_errors += 1
+                true_value = option
+            else:
+                print("no error")
+        print(f"num_errors: {num_errors}")
 
         if num_errors == 0:
             return False
         if num_errors == 1:
-
+            print(f"The value of ({self.x},{self.y}) was found to be {true_value}")
+            for option in self.options:
+                if option != true_value:
+                    self.remove_num_option_recursive(option, None, display)
             return True
         print("This board is invalid.")
         exit()
@@ -223,6 +235,26 @@ class Group:
                 self.find_sum_options(total - num, size - 1, true_size, sum_option)
             del sum_option[-1]
 
+    # Returns false if an error was found, true if no problems
+    def remove_sum_option_recursive(self, removed_option: list, display: Display):
+        sum_options = self.sum_options
+        sum_options.remove(removed_option)
+        i = 0
+        for cell in self.cells:
+            num = removed_option[i]
+
+            # Problem: Slow? Maybe do outside loop
+            found_num = False
+            for sum_option in sum_options:
+                if sum_option[i] == num:
+                    found_num = True
+
+            if num in cell.options and not found_num:
+                if not cell.remove_num_option_recursive(num, self.direction, display):
+                    return False
+
+            i += 1
+        return True
     def remove_sum_option(self, removed_option: list):
         sum_options = self.sum_options
         sum_options.remove(removed_option)

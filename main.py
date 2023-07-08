@@ -39,7 +39,7 @@ def main():
     display.draw_board(board)
     root.update()
     board.fill_cell_options(display)
-    board.finish_board()
+    board.finish_board(display)
     display.draw_board(board)
     # print(board)
 

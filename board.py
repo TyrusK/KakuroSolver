@@ -122,14 +122,14 @@ class Board:
         return"""
 
     # Next step is try dif algorithm where group removes don't call cell removes, go over board many times
-    '''def fill_cell_options3(self):
+    def fill_cell_options_recursive(self):
         for group in self.groups:
-            group.find_sum_options(group.total, group.size, group.size, [])
+            group.find_sum_options_recursive(group.total, group.size, group.size, [])
         for cell_line in self.cells:
             for cell in cell_line:
                 if cell.cell_type == CellType.SPACE:
                     # print(f"Starting cell ({cell.x}, {cell.y})")
-                    cell.find_options3()'''
+                    cell.find_options3()
 
     def fill_cell_options(self, display: Display):
         for group in self.groups:
@@ -144,7 +144,7 @@ class Board:
                         if cell.find_options(display):
                             done = False
 
-    def finish_board(self):
+    def finish_board(self, display: Display):
         target_num_options = 2
         while True:
             print(f"Target: {target_num_options}")
@@ -152,7 +152,7 @@ class Board:
             for line in self.cells:
                 for cell in line:
                     if cell.cell_type == CellType.SPACE and len(cell.options) == target_num_options:
-                        found_value = cell.try_removing_options()
+                        found_value = cell.try_removing_options(display)
                         if found_value:
                             break
                 if found_value:
